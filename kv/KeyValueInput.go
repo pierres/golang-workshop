@@ -18,17 +18,11 @@ func (input keyValueInput) isWriteStatement() bool {
 	return true
 }
 
-func (input keyValueInput) isReadStatement() bool {
-	return !input.isWriteStatement()
-}
-
 func (input keyValueInput) getRequest() []string {
-	// TODO: validate
 	return input
 }
 
 func (input keyValueInput) getMap() map[string]string {
-	// TODO: validate
 	keyValues := make(map[string]string)
 	for _, line := range input {
 		splitLine := strings.Split(line, "=")
