@@ -7,6 +7,9 @@ import (
 type keyValueInput []string
 
 func (input keyValueInput) isWriteStatement() bool {
+	if len(input) == 0 {
+		return false
+	}
 	for _, arg := range input {
 		if strings.Count(arg, "=") != 1 {
 			return false
