@@ -21,17 +21,23 @@ func (kv *keyValueStorage) write(storage io.Writer) error {
 	return err
 }
 
-func (kv keyValueStorage) filter(keys []string) (res keyValueStorage) {
-	res = keyValueStorage{}
-	for key, value := range (kv) {
-		res[key] = value;
+func (kv keyValueStorage) filter(keys []string) keyValueStorage {
+	res := keyValueStorage{}
+	for key, value := range kv {
+		res[key] = value
 	}
 	return res
 }
 
 func (kv keyValueStorage) String() (res string) {
-	for key, value := range (kv) {
+	for key, value := range kv {
 		res += key + " = " + value + "\n"
 	}
 	return res
+}
+
+func (kv keyValueStorage) merge(newkv keyValueStorage) {
+	for key, value := range newkv {
+		kv[key] = value
+	}
 }
