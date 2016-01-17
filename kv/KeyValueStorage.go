@@ -22,6 +22,10 @@ func (kv *keyValueStorage) write(storage io.Writer) error {
 }
 
 func (kv keyValueStorage) filter(keys []string) keyValueStorage {
+	if len(keys) == 0 {
+		return kv
+	}
+
 	res := keyValueStorage{}
 	for _, key := range keys {
 		if value, ok := kv[key]; ok {
