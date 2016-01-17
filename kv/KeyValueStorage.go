@@ -20,3 +20,18 @@ func (kv *keyValueStorage) write(storage io.Writer) error {
 	_, err = storage.Write(data)
 	return err
 }
+
+func (kv keyValueStorage) filter(keys []string) (res keyValueStorage) {
+	res = keyValueStorage{}
+	for key, value := range (kv) {
+		res[key] = value;
+	}
+	return res
+}
+
+func (kv keyValueStorage) String() (res string) {
+	for key, value := range (kv) {
+		res += key + " = " + value + "\n"
+	}
+	return res
+}

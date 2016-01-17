@@ -24,8 +24,7 @@ func main() {
 
 		k := keyValueStorage{}
 		k.read(file)
-		for _, key := range requestedKeys {
-			fmt.Println(key + "=" + k[key])
-		}
+
+		fmt.Print(k.filter(requestedKeys))
 	}
 }
