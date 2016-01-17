@@ -23,8 +23,10 @@ func (kv *keyValueStorage) write(storage io.Writer) error {
 
 func (kv keyValueStorage) filter(keys []string) keyValueStorage {
 	res := keyValueStorage{}
-	for key, value := range kv {
-		res[key] = value
+	for _, key := range keys {
+		if value, ok := kv[key]; ok {
+			res[key] = value
+		}
 	}
 	return res
 }
