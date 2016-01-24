@@ -4,9 +4,9 @@ import (
 	"strings"
 )
 
-type keyValueInput []string
+type Input []string
 
-func (input keyValueInput) isWriteStatement() bool {
+func (input Input) IsWriteStatement() bool {
 	if len(input) == 0 {
 		return false
 	}
@@ -18,11 +18,11 @@ func (input keyValueInput) isWriteStatement() bool {
 	return true
 }
 
-func (input keyValueInput) getRequest() []string {
+func (input Input) Request() []string {
 	return input
 }
 
-func (input keyValueInput) getMap() map[string]string {
+func (input Input) Map() map[string]string {
 	keyValues := make(map[string]string)
 	for _, line := range input {
 		splitLine := strings.Split(line, "=")

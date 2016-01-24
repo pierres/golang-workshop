@@ -6,28 +6,28 @@ import (
 )
 
 func main() {
-	args := keyValueInput(os.Args[1:])
+	args := Input(os.Args[1:])
 
 	storageFileName := os.TempDir() + "/kv"
 	file, err := os.Open(storageFileName)
 
-	k := keyValueStorage{}
+	k := Store{}
 
 	if err == nil {
-		k.read(file)
+		k.Read(file)
 	}
 	file.Close()
 
-	if args.isWriteStatement() {
-		k.merge(args.getMap())
+	if args.IsWriteStatement() {
+		k.Merge(args.Map())
 
 		file, _ := os.Create(storageFileName)
 		defer file.Close()
 
-		k.write(file)
+		k.Write(file)
 	} else {
-		requestedKeys := args.getRequest()
+		requestedKeys := args.Request()
 
-		fmt.Print(k.filter(requestedKeys))
+		fmt.Print(k.Filter(requestedKeys))
 	}
 }

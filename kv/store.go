@@ -5,14 +5,14 @@ import (
 	"io"
 )
 
-type keyValueStorage map[string]string
+type Store map[string]string
 
-func (kv *keyValueStorage) read(storage io.Reader) error {
+func (kv *Store) Read(storage io.Reader) error {
 	err := json.NewDecoder(storage).Decode(kv)
 	return err
 }
 
-func (kv *keyValueStorage) write(storage io.Writer) error {
+func (kv *Store) Write(storage io.Writer) error {
 	data, err := json.Marshal(kv)
 	if err != nil {
 		return err
@@ -21,12 +21,12 @@ func (kv *keyValueStorage) write(storage io.Writer) error {
 	return err
 }
 
-func (kv keyValueStorage) filter(keys []string) keyValueStorage {
+func (kv Store) Filter(keys []string) Store {
 	if len(keys) == 0 {
 		return kv
 	}
 
-	res := keyValueStorage{}
+	res := Store{}
 	for _, key := range keys {
 		if value, ok := kv[key]; ok {
 			res[key] = value
@@ -35,14 +35,14 @@ func (kv keyValueStorage) filter(keys []string) keyValueStorage {
 	return res
 }
 
-func (kv keyValueStorage) String() (res string) {
+func (kv Store) String() (res string) {
 	for key, value := range kv {
 		res += key + " = " + value + "\n"
 	}
 	return res
 }
 
-func (kv keyValueStorage) merge(newkv keyValueStorage) {
+func (kv Store) Merge(newkv Store) {
 	for key, value := range newkv {
 		kv[key] = value
 	}
