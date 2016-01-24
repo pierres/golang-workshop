@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -39,6 +41,43 @@ func Test_Merge(t *testing.T) {
 		s.Merge(c.in)
 		if !reflect.DeepEqual(s, c.want) {
 			t.Errorf("Got %q but wanted %q", s, c.want)
+		}
+	}
+}
+
+func Test_Read(t *testing.T) {
+	cases := []struct {
+		in   string
+		want Store
+	}{
+		{"{}", Store{}},
+		{"{\"a\":\"b\"}", Store{"a": "b"}},
+		{"{\"a\":\"b\",\"c\":\"d\"}", Store{"a": "b", "c": "d"}},
+	}
+	s := Store{}
+	for _, c := range cases {
+		s.Read(strings.NewReader(c.in))
+		if !reflect.DeepEqual(s, c.want) {
+			t.Errorf("Got %q but wanted %q", s, c.want)
+		}
+	}
+}
+
+func Test_Write(t *testing.T) {
+	cases := []struct {
+		in   Store
+		want string
+	}{
+		{Store{}, "{}"},
+		{Store{"a": "b"}, "{\"a\":\"b\"}"},
+		{Store{"a": "b", "c": "d"}, "{\"a\":\"b\",\"c\":\"d\"}"},
+	}
+	for _, c := range cases {
+		s := Store(c.in)
+		out := new(bytes.Buffer)
+		s.Write(out)
+		if out.String() != c.want {
+			t.Errorf("Got %q but wanted %q", out, c.want)
 		}
 	}
 }
