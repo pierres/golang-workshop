@@ -81,3 +81,24 @@ func Test_Write(t *testing.T) {
 		}
 	}
 }
+
+func Test_Filter(t *testing.T) {
+	cases := []struct {
+		in     Store
+		filter []string
+		want   Store
+	}{
+		{Store{}, []string{}, Store{}},
+		{Store{"a": "b"}, []string{"a"}, Store{"a": "b"}},
+		{Store{"a": "b", "c": "d"}, []string{"a"}, Store{"a": "b"}},
+		{Store{"a": "b", "c": "d"}, []string{"c"}, Store{"c": "d"}},
+		{Store{"a": "b", "c": "d"}, []string{"d"}, Store{}},
+	}
+	for _, c := range cases {
+		s := Store(c.in)
+		got := s.Filter(c.filter)
+		if !reflect.DeepEqual(got, c.want) {
+			t.Errorf("Got %q but wanted %q", got, c.want)
+		}
+	}
+}
