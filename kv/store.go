@@ -43,6 +43,7 @@ func (kv Store) String() (res string) {
 }
 
 func (kv Store) Merge(newkv Store) {
+	// TODO: fix unstable iterator
 	for key, value := range newkv {
 		kv[key] = value
 	}
