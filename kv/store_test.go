@@ -102,3 +102,36 @@ func Test_Filter(t *testing.T) {
 		}
 	}
 }
+
+func Benchmark_ConcurrentWrites(b *testing.B) {
+	doneChannel := make(chan bool)
+	s := NewStore(Data{})
+	out := new(bytes.Buffer)
+
+	for i := 0; i < b.N; i++ {
+		go func() {
+			s.Write(out)
+			doneChannel <- true
+		}()
+	}
+
+	for i := 0; i < b.N; i++ {
+		<-doneChannel
+	}
+}
+
+func Benchmark_ConcurrentReads(b *testing.B) {
+	doneChannel := make(chan bool)
+	s := NewStore(Data{})
+
+	for i := 0; i < b.N; i++ {
+		go func() {
+			s.Read(strings.NewReader(""))
+			doneChannel <- true
+		}()
+	}
+
+	for i := 0; i < b.N; i++ {
+		<-doneChannel
+	}
+}
