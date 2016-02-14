@@ -9,15 +9,15 @@ import (
 
 func Test_String(t *testing.T) {
 	cases := []struct {
-		in   Store
+		in   Data
 		want string
 	}{
-		{Store{}, ""},
-		{Store{"a": "b"}, "a = b\n"},
-		{Store{"a": "b", "c": "d"}, "a = b\nc = d\n"},
+		{Data{}, ""},
+		{Data{"a": "b"}, "a = b\n"},
+		{Data{"a": "b", "c": "d"}, "a = b\nc = d\n"},
 	}
 	for _, c := range cases {
-		s := Store(c.in)
+		s := NewStore(c.in)
 		if got := s.String(); got != c.want {
 			t.Errorf("Got %q but wanted %q", got, c.want)
 		}
@@ -26,20 +26,20 @@ func Test_String(t *testing.T) {
 
 func Test_Merge(t *testing.T) {
 	cases := []struct {
-		base Store
-		in   Store
-		want Store
+		base Data
+		in   Data
+		want Data
 	}{
-		{Store{}, Store{}, Store{}},
-		{Store{}, Store{"a": "b"}, Store{"a": "b"}},
-		{Store{"a": "b"}, Store{}, Store{"a": "b"}},
-		{Store{"a": "b"}, Store{"c": "d"}, Store{"a": "b", "c": "d"}},
-		{Store{"a": "b"}, Store{"a": "c"}, Store{"a": "c"}},
+		{Data{}, Data{}, Data{}},
+		{Data{}, Data{"a": "b"}, Data{"a": "b"}},
+		{Data{"a": "b"}, Data{}, Data{"a": "b"}},
+		{Data{"a": "b"}, Data{"c": "d"}, Data{"a": "b", "c": "d"}},
+		{Data{"a": "b"}, Data{"a": "c"}, Data{"a": "c"}},
 	}
 	for _, c := range cases {
-		s := Store(c.base)
+		s := NewStore(c.base)
 		s.Merge(c.in)
-		if !reflect.DeepEqual(s, c.want) {
+		if !reflect.DeepEqual(s, NewStore(c.want)) {
 			t.Errorf("Got %q but wanted %q", s, c.want)
 		}
 	}
@@ -48,16 +48,16 @@ func Test_Merge(t *testing.T) {
 func Test_Read(t *testing.T) {
 	cases := []struct {
 		in   string
-		want Store
+		want Data
 	}{
-		{"{}", Store{}},
-		{"{\"a\":\"b\"}", Store{"a": "b"}},
-		{"{\"a\":\"b\",\"c\":\"d\"}", Store{"a": "b", "c": "d"}},
+		{"{}", Data{}},
+		{"{\"a\":\"b\"}", Data{"a": "b"}},
+		{"{\"a\":\"b\",\"c\":\"d\"}", Data{"a": "b", "c": "d"}},
 	}
-	s := Store{}
+	s := NewStore(Data{})
 	for _, c := range cases {
 		s.Read(strings.NewReader(c.in))
-		if !reflect.DeepEqual(s, c.want) {
+		if !reflect.DeepEqual(s, NewStore(c.want)) {
 			t.Errorf("Got %q but wanted %q", s, c.want)
 		}
 	}
@@ -65,15 +65,15 @@ func Test_Read(t *testing.T) {
 
 func Test_Write(t *testing.T) {
 	cases := []struct {
-		in   Store
+		in   Data
 		want string
 	}{
-		{Store{}, "{}"},
-		{Store{"a": "b"}, "{\"a\":\"b\"}"},
-		{Store{"a": "b", "c": "d"}, "{\"a\":\"b\",\"c\":\"d\"}"},
+		{Data{}, "{}"},
+		{Data{"a": "b"}, "{\"a\":\"b\"}"},
+		{Data{"a": "b", "c": "d"}, "{\"a\":\"b\",\"c\":\"d\"}"},
 	}
 	for _, c := range cases {
-		s := Store(c.in)
+		s := NewStore(c.in)
 		out := new(bytes.Buffer)
 		s.Write(out)
 		if out.String() != c.want {
@@ -84,20 +84,20 @@ func Test_Write(t *testing.T) {
 
 func Test_Filter(t *testing.T) {
 	cases := []struct {
-		in     Store
+		in     Data
 		filter []string
-		want   Store
+		want   Data
 	}{
-		{Store{}, []string{}, Store{}},
-		{Store{"a": "b"}, []string{"a"}, Store{"a": "b"}},
-		{Store{"a": "b", "c": "d"}, []string{"a"}, Store{"a": "b"}},
-		{Store{"a": "b", "c": "d"}, []string{"c"}, Store{"c": "d"}},
-		{Store{"a": "b", "c": "d"}, []string{"d"}, Store{}},
+		{Data{}, []string{}, Data{}},
+		{Data{"a": "b"}, []string{"a"}, Data{"a": "b"}},
+		{Data{"a": "b", "c": "d"}, []string{"a"}, Data{"a": "b"}},
+		{Data{"a": "b", "c": "d"}, []string{"c"}, Data{"c": "d"}},
+		{Data{"a": "b", "c": "d"}, []string{"d"}, Data{}},
 	}
 	for _, c := range cases {
-		s := Store(c.in)
+		s := NewStore(c.in)
 		got := s.Filter(c.filter)
-		if !reflect.DeepEqual(got, c.want) {
+		if !reflect.DeepEqual(got, NewStore(c.want)) {
 			t.Errorf("Got %q but wanted %q", got, c.want)
 		}
 	}

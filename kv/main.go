@@ -11,7 +11,7 @@ func main() {
 	storageFileName := os.TempDir() + "/kv"
 	file, err := os.Open(storageFileName)
 
-	k := Store{}
+	k := NewStore(Data{})
 
 	if err == nil {
 		k.Read(file)
