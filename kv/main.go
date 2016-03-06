@@ -56,7 +56,7 @@ func (h Handler) Post(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 func main() {
 	mux := httprouter.New()
 	handler := NewHandler(os.TempDir() + "/kv")
-	mux.Handler("GET", "/:key", handler)
-	mux.Handler("POST", "/:key", handler)
+	mux.GET("/:key", handler.Get)
+	mux.POST("/:key", handler.Post)
 	panic(http.ListenAndServe(":8080", mux))
 }
