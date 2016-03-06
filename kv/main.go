@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -43,7 +44,9 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	mux := httprouter.New()
 	handler := NewHandler(os.TempDir() + "/kv")
-	http.Handle("/", handler)
-	http.ListenAndServe(":8080", nil)
+	mux.Handler("GET", "/:key", handler)
+	mux.Handler("POST", "/:key", handler)
+	panic(http.ListenAndServe(":8080", mux))
 }
