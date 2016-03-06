@@ -30,17 +30,27 @@ func NewHandler(storageFileName string) Handler {
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		key := r.URL.Path[1:]
-		fmt.Fprint(w, h.k.Filter([]string{key}))
+		h.Get(w, r, httprouter.Params{httprouter.Param{"key", key}})
 	} else if r.Method == "POST" {
 		key := r.URL.Path[1:]
-		value, _ := ioutil.ReadAll(r.Body)
-		h.k.Merge(Data{key: string(value)})
-		file, _ := os.Create(h.storageFileName)
-		defer file.Close()
-		h.k.Write(file)
+		h.Post(w, r, httprouter.Params{httprouter.Param{"key", key}})
 	} else {
 		http.Error(w, "Method not supported", http.StatusInternalServerError)
 	}
+}
+
+func (h Handler) Get(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	key := ps.ByName("key")
+	fmt.Fprint(w, h.k.Filter([]string{key}))
+}
+
+func (h Handler) Post(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	key := ps.ByName("key")
+	value, _ := ioutil.ReadAll(r.Body)
+	h.k.Merge(Data{key: string(value)})
+	file, _ := os.Create(h.storageFileName)
+	defer file.Close()
+	h.k.Write(file)
 }
 
 func main() {
